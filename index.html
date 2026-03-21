@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscrição - Campeonato 2026</title>
+    <title>Inscrição - Campeonato Intervalau</title>
     <style>
         :root {
             --primary-red: #ff4b2b;
@@ -62,6 +62,21 @@
 
         button:disabled { opacity: 0.5; cursor: not-allowed; }
 
+        .observacao-regras {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #333;
+            font-size: 0.75rem;
+            color: #aaa;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .observacao-regras span {
+            color: var(--primary-red);
+            font-weight: bold;
+        }
+
         #protocoloResult { display: none; text-align: center; }
         .protocolo-box {
             background: #000; padding: 1.5rem; border-radius: 10px;
@@ -74,10 +89,10 @@
 
 <div class="container">
     <div id="formContainer">
-        <h2>🏆 TORNEIO INÍCIO - Basquete 2026</h2>
+        <h2>⚽ Campeonato Intervalau - Futebol</h2>
         <form id="registrationForm">
             <div class="form-group">
-                <label>Nome do Player</label>
+                <label>Nome do Jogador</label>
                 <input type="text" id="nome" required placeholder="Nome completo">
             </div>
             <div class="form-group">
@@ -85,7 +100,7 @@
                 <input type="text" id="curso" required placeholder="Ex: Informática">
             </div>
             <div class="form-group">
-                <label>Turno de Batalha</label>
+                <label>Turno de Partida</label>
                 <select id="periodo" required>
                     <option value="">Selecione...</option>
                     <option value="Tarde">Tarde</option>
@@ -97,6 +112,10 @@
                 <input type="text" id="educador" required placeholder="Nome do professor">
             </div>
             <button type="submit" id="btnSubmit">Garantir minha vaga</button>
+            
+            <div class="observacao-regras">
+                <span>⚠️ ATENÇÃO:</span> Cursos com nomes preenchidos de forma incorreta ou nomes duplicados serão <span>INVALIDADOS</span> para o torneio.
+            </div>
         </form>
     </div>
 
@@ -106,7 +125,7 @@
             <span class="protocolo-numero" id="numeroProtocolo"></span>
         </div>
         <p>Apresente este código no dia do evento.</p>
-        <button onclick="window.location.reload()" style="background:none; border:1px solid #fff; color:#fff; font-size:0.7rem">Nova Inscrição</button>
+        <button onclick="window.location.reload()" style="background:none; border:1px solid #fff; color:#fff; font-size:0.7rem; padding: 0.5rem; margin-top: 1rem;">Nova Inscrição</button>
     </div>
 </div>
 
@@ -123,12 +142,12 @@
         btn.disabled = true;
         btn.innerText = "Verificando no sistema...";
 
-        // --- MUDANÇA AQUI: PROTOCOLO DE BASQUETE ---
-        // Lista de prefixos temáticos
-        const basketTerms = ["MVP", "DUNK", "NBA", "HOOP", "SWISH", "JORDAN"];
+        // --- MUDANÇA AQUI: PROTOCOLO DE FUTEBOL ---
+        // Lista de prefixos temáticos de futebol
+        const futTerms = ["GOL", "VAR", "CRAQUE", "BOLA", "CAMISA10", "ZAGA"];
         // Escolhe um termo aleatório
-        const randomTerm = basketTerms[Math.floor(Math.random() * basketTerms.length)];
-        // Gera o protocolo (Ex: MVP-A1B2)
+        const randomTerm = futTerms[Math.floor(Math.random() * futTerms.length)];
+        // Gera o protocolo (Ex: GOL-A1B2)
         const protocolo = randomTerm + "-" + Math.random().toString(36).substr(2, 4).toUpperCase();
         // -------------------------------------------
 
@@ -143,13 +162,13 @@
         try {
             const response = await fetch(APP_URL, {
                 method: 'POST',
-                body: JSON.stringify(dados) // corrigido para enviar o objeto dados diretamente
+                body: JSON.stringify(dados) 
             });
 
             const result = await response.text();
 
             if (result === "DUPLICADO") {
-                alert("❌ ERRO: Este player já está inscrito!");
+                alert("❌ ERRO: Este jogador já está inscrito!");
                 btn.disabled = false;
                 btn.innerText = "Garantir minha vaga";
             } else {
@@ -159,12 +178,9 @@
                 document.getElementById('numeroProtocolo').innerText = protocolo;
             }
         } catch (err) {
-            // Em caso de erro de CORS ou rede, assumimos sucesso visual para teste ou alertamos erro
-            // Se o Google Script não retornar cabeçalhos CORS corretos, cairá aqui.
-            // Para garantir que o usuário veja o protocolo mesmo se der erro de "opaque response":
             console.log("Tentativa de envio completada (possível restrição de CORS, mas enviado).");
             
-            // Se quiser forçar a exibição de sucesso mesmo com erro de rede (comum em testes simples):
+            // Forçando a exibição visual de sucesso
              document.getElementById('formContainer').style.display = 'none';
              document.getElementById('protocoloResult').style.display = 'block';
              document.getElementById('numeroProtocolo').innerText = protocolo;
@@ -173,4 +189,3 @@
 </script>
 </body>
 </html>
-```
